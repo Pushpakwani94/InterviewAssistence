@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, timer } from 'rxjs';
+import { Observable, timer, of } from 'rxjs';
 import { switchMap, distinctUntilChanged, map, catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -46,7 +46,7 @@ export class SocketService {
     return timer(0, 2000).pipe(
       switchMap(() => {
         if (!this.currentSessionCode) {
-          return [null];
+          return of(null);
         }
         return this.http.get<any>(`${this.serverUrl}/api/sessions/receive/${this.currentSessionCode}`).pipe(
           // Extract the nested .data property returned by the Express backend
@@ -54,7 +54,7 @@ export class SocketService {
           // If the network request fails (e.g., server down), catch the error so timer doesn't stop
           catchError(err => {
             console.error('Polling error:', err);
-            return [null];
+            return of(null);
           })
         );
       }),

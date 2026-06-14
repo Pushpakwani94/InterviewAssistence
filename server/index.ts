@@ -63,7 +63,7 @@ app.get('/', (req, res) => {
 const PORT = process.env['PORT'] || 5000;
 
 if (process.env['VERCEL'] !== '1') {
-  server.listen(PORT, () => {
+  server.listen(PORT as number, '0.0.0.0', () => {
     console.log(`Server running in ${process.env['NODE_ENV'] || 'development'} mode on port ${PORT}`);
   });
 }
