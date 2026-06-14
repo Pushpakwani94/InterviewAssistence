@@ -1,6 +1,5 @@
 import express from 'express';
 import http from 'http';
-import { Server } from 'socket.io';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db';
@@ -18,12 +17,6 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: '*', // For development, allow all origins
-    methods: ['GET', 'POST']
-  }
-});
 
 // Middleware
 app.use(cors());
@@ -36,25 +29,30 @@ app.use('/api/questions', questionRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/sessions', sessionRoutes);
 
-// Socket.io connection
-io.on('connection', (socket) => {
-  console.log('New client connected:', socket.id);
+// HTTP Polling session store
+const sessions: Record<string, any> = {};
 
-  socket.on('join_session', (sessionCode) => {
-    socket.join(sessionCode);
-    console.log(`Socket ${socket.id} joined session ${sessionCode}`);
-  });
+// Polling Routes
+app.post('/api/sessions/send', (req, res) => {
+  const { sessionCode, answerData } = req.body;
+  if (!sessionCode) {
+    return res.status(400).json({ error: 'Session code required' });
+  }
+  sessions[sessionCode] = answerData;
+  console.log(`Saved answer for session ${sessionCode}`);
+  res.json({ success: true });
+});
 
-  socket.on('send_answer', (data) => {
-    // Expected data format: { sessionCode, answerData }
-    const { sessionCode, answerData } = data;
-    console.log(`Sending answer to session ${sessionCode}:`, answerData.question);
-    io.to(sessionCode).emit('receive_answer', answerData);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
-  });
+app.get('/api/sessions/receive/:sessionCode', (req, res) => {
+  const sessionCode = req.params.sessionCode;
+  const data = sessions[sessionCode];
+  // In a real app, you might want to clear it after reading, but since we are polling, 
+  // keeping the latest question allows late-joiners to see the current question.
+  if (data) {
+    res.json({ data });
+  } else {
+    res.json({ data: null });
+  }
 });
 
 // Basic route
