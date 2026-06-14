@@ -15,7 +15,7 @@ import { SocketService } from '@shared/services/socket.service';
       <div class="p-3 border-bottom border-dark-custom d-flex gap-2 align-items-center">
         <div class="position-relative flex-grow-1">
           <i class="bi bi-search position-absolute top-50 translate-middle-y text-secondary ms-3"></i>
-          <input type="text" class="input-custom w-100 ps-5 pe-5" [placeholder]="'Search questions in ' + state.activeTechnology().name + '...'" style="font-size:0.85rem"
+          <input type="text" class="input-custom w-100 ps-5 pe-5" placeholder="Search all questions across all categories..." style="font-size:0.85rem"
                  [ngModel]="state.searchQuery()" (ngModelChange)="state.setSearch($event)">
           <i class="bi position-absolute top-50 translate-middle-y end-0 me-3 cursor-pointer fs-5" 
              [ngClass]="isListening ? 'bi-mic-fill text-danger pulse-anim' : 'bi-mic text-secondary'"
@@ -197,7 +197,7 @@ export class QuestionTableComponent {
   handleSpokenText(transcript: string) {
     this.state.setSearch(transcript);
     
-    const questions = this.state.allQuestions();
+    const questions = this.state.masterQuestionDB;
     
     // Filter out common stop words to focus on keywords
     const stopWords = ['what', 'is', 'the', 'how', 'do', 'you', 'to', 'in', 'of', 'and', 'a', 'an', 'are', 'tell', 'me', 'about', 'your'];
