@@ -16,7 +16,7 @@
     "moduleResolution": "bundler",
     "baseUrl": "./",
     "paths": {
-      "@shared/*": ["projects/shared/src/lib/*"]
+      "@shared/*": ["src/app/shared/*"]
     },
     "importHelpers": true,
     "target": "ES2022",

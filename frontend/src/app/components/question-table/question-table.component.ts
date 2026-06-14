@@ -31,6 +31,13 @@ import { SocketService } from '@shared/services/socket.service';
             {{ q.title }}
           </div>
           
+          <div>
+            <button class="btn btn-sm btn-outline-custom text-primary-custom px-3 py-1 d-flex align-items-center gap-1" 
+                    (click)="sendDirectly(q); $event.stopPropagation()">
+              <i class="bi bi-send-fill" style="font-size: 0.75rem;"></i> Send
+            </button>
+          </div>
+          
           <!-- Columns removed per user request -->
 
         </div>

@@ -1,6 +1,6 @@
 {
-  "buildCommand": "cd frontend && npm install && npx ng build admin-app",
-  "outputDirectory": "frontend/dist/admin-app/browser",
+  "buildCommand": "cd frontend && npm install && npx ng build",
+  "outputDirectory": "frontend/dist/app/browser",
   "framework": "angular",
   "rewrites": [
     {

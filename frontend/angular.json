@@ -3,36 +3,36 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "admin-app": {
+    "app": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
         }
       },
-      "root": "projects/admin-app",
-      "sourceRoot": "projects/admin-app/src",
+      "root": "",
+      "sourceRoot": "src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/admin-app",
-            "index": "projects/admin-app/src/index.html",
-            "browser": "projects/admin-app/src/main.ts",
+            "outputPath": "dist/app",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
-            "tsConfig": "projects/admin-app/tsconfig.app.json",
+            "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
-                "input": "projects/admin-app/public"
+                "input": "public"
               }
             ],
             "styles": [
-              "projects/admin-app/src/styles.scss"
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -64,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "admin-app:build:production"
+              "buildTarget": "app:build:production"
             },
             "development": {
-              "buildTarget": "admin-app:build:development"
+              "buildTarget": "app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -82,16 +82,16 @@
               "zone.js",
               "zone.js/testing"
             ],
-            "tsConfig": "projects/admin-app/tsconfig.spec.json",
+            "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
-                "input": "projects/admin-app/public"
+                "input": "public"
               }
             ],
             "styles": [
-              "projects/admin-app/src/styles.scss"
+              "src/styles.scss"
             ],
             "scripts": []
           }
