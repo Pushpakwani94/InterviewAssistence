@@ -29,16 +29,16 @@ import { Subscription } from 'rxjs';
           </div>
 
           <div>
-            <h5 class="m-0 fw-bold">Interview Assistant</h5>
-            <small class="text-secondary">Real-time answer delivery</small>
+            <h5 class="m-0 fw-bold" style="font-size: clamp(1rem, 4vw, 1.25rem);">Interview Assistant</h5>
+            <small class="text-secondary d-none d-sm-block">Real-time answer delivery</small>
           </div>
         </div>
-        <div class="d-flex gap-3 fs-4 align-items-center">
-          <span class="badge border border-neon text-neon px-2 py-1 me-1 fw-bold" style="font-size:0.8rem">
+        <div class="d-flex gap-2 gap-sm-3 fs-4 align-items-center">
+          <span class="badge border border-neon text-neon px-2 py-1 fw-bold" style="font-size:0.75rem">
             {{ sessionCode }}
           </span>
           <i class="bi bi-moon cursor-pointer"></i>
-          <i class="bi bi-arrows-fullscreen cursor-pointer"></i>
+          <i class="bi bi-arrows-fullscreen cursor-pointer d-none d-sm-block"></i>
         </div>
       </header>
 

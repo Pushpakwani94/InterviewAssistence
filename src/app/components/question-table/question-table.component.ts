@@ -46,10 +46,10 @@ import { SocketService } from '@shared/services/socket.service';
 
 
       <!-- Toolbar (Moved Below) -->
-      <div class="p-3 border-top border-dark-custom d-flex gap-2 align-items-center">
+      <div class="p-2 p-md-3 border-top border-dark-custom d-flex gap-2 align-items-center">
         <div class="position-relative flex-grow-1">
           <i class="bi bi-search position-absolute top-50 translate-middle-y text-secondary ms-3"></i>
-          <input type="text" class="input-custom w-100 ps-5 pe-5" placeholder="Search all questions across all categories..." style="font-size:0.85rem"
+          <input type="text" class="input-custom w-100 ps-5 pe-5" placeholder="Search questions..." style="font-size:0.85rem"
                  [ngModel]="state.searchQuery()" (ngModelChange)="state.setSearch($event)">
           <i class="bi position-absolute top-50 translate-middle-y end-0 me-3 cursor-pointer fs-5" 
              [ngClass]="isListening ? 'bi-mic-fill text-danger pulse-anim' : 'bi-mic text-secondary'"

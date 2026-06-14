@@ -22,7 +22,7 @@ import { SocketService } from '@shared/services/socket.service';
         </div>
       </div>
 
-      <div class="flex-grow-1 overflow-auto p-4 detail-scroll">
+      <div class="flex-grow-1 overflow-auto p-3 p-md-4 detail-scroll">
         
         <!-- Title Section -->
         <div class="mb-3">
