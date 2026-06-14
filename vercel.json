@@ -1,0 +1,11 @@
+{
+  "buildCommand": "cd frontend && npm install && npx ng build admin-app",
+  "outputDirectory": "frontend/dist/admin-app",
+  "framework": "angular",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
