@@ -48,7 +48,7 @@ export class SocketService {
         if (!this.currentSessionCode) {
           return of(null);
         }
-        return this.http.get<any>(`${this.serverUrl}/api/sessions/receive/${this.currentSessionCode}`).pipe(
+        return this.http.get<any>(`${this.serverUrl}/api/sessions/receive/${this.currentSessionCode}?t=${new Date().getTime()}`).pipe(
           // Extract the nested .data property returned by the Express backend
           map(res => res?.data || null),
           // If the network request fails (e.g., server down), catch the error so timer doesn't stop

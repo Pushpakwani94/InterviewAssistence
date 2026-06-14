@@ -67,6 +67,11 @@ app.post('/api/sessions/send', async (req, res) => {
 app.get('/api/sessions/receive/:sessionCode', async (req, res) => {
   const sessionCode = req.params.sessionCode;
   
+  // Prevent Vercel edge network and browser from caching the polling GET request
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  
   try {
     if (mongoose.connection.readyState === 1) {
       const state = await PollingState.findOne({ sessionCode });
