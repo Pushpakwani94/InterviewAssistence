@@ -126,6 +126,30 @@ export class AdminStateService {
           technology: 'Playwright'
         }));
         db.push(...pwQs);
+      } else if (tech.name === 'SQL') {
+        const sqlQA: Record<string, string> = {
+          "What is SQL?": "SQL stands for Structured Query Language. It is used to communicate with and manipulate databases.",
+          "What is a Primary Key?": "A Primary Key is a column or a set of columns that uniquely identifies each row in a table. It cannot contain NULL values.",
+          "What is a Foreign Key?": "A Foreign Key is a field in one table that uniquely identifies a row of another table or the same table, establishing a link between them.",
+          "What is a JOIN in SQL?": "A JOIN clause is used to combine rows from two or more tables, based on a related column between them.",
+          "What are the different types of JOINs?": "The main types of JOINs are INNER JOIN, LEFT (OUTER) JOIN, RIGHT (OUTER) JOIN, and FULL (OUTER) JOIN.",
+          "What is the difference between TRUNCATE and DELETE?": "DELETE is a DML command used to remove specific rows based on a condition and can be rolled back. TRUNCATE is a DDL command that removes all rows from a table quickly and cannot be rolled back.",
+          "What is a subquery?": "A subquery is a query nested inside another query. It can be used in SELECT, INSERT, UPDATE, or DELETE statements.",
+          "What is the difference between UNION and UNION ALL?": "UNION combines the result sets of two queries and removes duplicates. UNION ALL combines them but keeps duplicates, which makes it faster.",
+          "What is an index?": "An index is a performance optimization feature that enables faster retrieval of records from a database table.",
+          "What is a view in SQL?": "A view is a virtual table based on the result-set of an SQL statement. It contains rows and columns, just like a real table."
+        };
+        const sqlQs = Object.entries(sqlQA).map(([q, a], index) => ({
+          id: Math.random(),
+          title: q,
+          difficulty: index % 3 === 0 ? 'Hard' : (index % 2 === 0 ? 'Easy' : 'Medium'),
+          answer: a,
+          explanation: '',
+          example: '',
+          keywords: ['SQL', 'Database', 'Query'],
+          technology: 'SQL'
+        }));
+        db.push(...sqlQs);
       } else {
         const genericQs = [
           { id: Math.random(), title: `What is ${tech.name}?`, difficulty: 'Easy', answer: `${tech.name} is a widely-used technology in modern software development.`, explanation: '', example: ``, keywords: [tech.name, 'Basics'], technology: tech.name },
