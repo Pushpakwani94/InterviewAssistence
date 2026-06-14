@@ -11,9 +11,15 @@ export class SocketService {
   private currentSessionCode: string | null = null;
 
   constructor(private http: HttpClient) {
-    // If running in browser and NOT on localhost, use the relative path so Vercel routing handles it
-    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-      this.serverUrl = window.location.origin;
+    if (typeof window !== 'undefined') {
+      const hostname = window.location.hostname;
+      // If deployed to Vercel (or not local/IP), use the same origin without port
+      if (hostname !== 'localhost' && !hostname.match(/^[0-9.]+$/)) {
+        this.serverUrl = window.location.origin;
+      } else {
+        // If localhost or local network IP (e.g. 192.168.x.x), use port 5000
+        this.serverUrl = `http://${hostname}:5000`;
+      }
     }
   }
 
