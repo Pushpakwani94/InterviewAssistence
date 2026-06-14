@@ -31,8 +31,6 @@ import { SocketService } from '@shared/services/socket.service';
       <div class="px-3 py-2 d-flex align-items-center text-muted-custom border-bottom border-dark-custom fw-bold" style="font-size:0.75rem;">
         <div style="width: 40px">#</div>
         <div class="flex-grow-1">Question</div>
-        <div style="width: 100px" class="text-center">Difficulty</div>
-        <div style="width: 80px" class="text-center">Actions</div>
       </div>
 
       <!-- Question List -->
@@ -40,7 +38,7 @@ import { SocketService } from '@shared/services/socket.service';
         <div class="question-row px-3 py-3 d-flex align-items-center border-bottom border-dark-custom" 
              *ngFor="let q of state.filteredQuestions(); let i = index"
              [class.active-row]="state.selectedQuestion()?.id === q.id"
-             (click)="state.selectQuestion(q)">
+             (click)="state.selectQuestion(q); sendDirectly(q)">
           
           <div style="width: 40px" class="text-secondary fs-7">{{ i + 1 }}</div>
           
@@ -48,17 +46,7 @@ import { SocketService } from '@shared/services/socket.service';
             {{ q.title }}
           </div>
           
-          <div style="width: 100px" class="text-center">
-            <span class="badge-custom" [ngClass]="getDifficultyClass(q.difficulty)">{{ q.difficulty }}</span>
-          </div>
-          
-          <div style="width: 80px" class="text-center d-flex justify-content-center gap-3 align-items-center">
-            <i class="bi bi-send-fill text-primary-custom cursor-pointer hover-scale" 
-               title="Send to Candidate" 
-               (click)="sendDirectly(q); $event.stopPropagation()"></i>
-            <i class="bi cursor-pointer" 
-               [ngClass]="state.selectedQuestion()?.id === q.id ? 'bi-star-fill text-warning' : 'bi-star text-secondary'"></i>
-          </div>
+          <!-- Columns removed per user request -->
 
         </div>
       </div>
