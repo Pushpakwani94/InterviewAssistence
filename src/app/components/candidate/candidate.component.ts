@@ -133,7 +133,7 @@ export class CandidateComponent implements OnInit, OnDestroy {
   constructor(private socketService: SocketService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.socketService.connect('http://localhost:5000');
+    this.socketService.connect();
     this.socketService.joinSession(this.sessionCode);
     this.connected = true;
 

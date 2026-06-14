@@ -149,7 +149,7 @@ export class AdminComponent implements OnInit {
   constructor(private socketService: SocketService) {}
 
   ngOnInit() {
-    this.socketService.connect('http://localhost:5000');
+    this.socketService.connect();
   }
 
   sendCustom() {
