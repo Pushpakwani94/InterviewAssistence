@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, timer } from 'rxjs';
-import { switchMap, distinctUntilChanged } from 'rxjs/operators';
+import { switchMap, distinctUntilChanged, map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -48,11 +48,17 @@ export class SocketService {
         if (!this.currentSessionCode) {
           return [null];
         }
-        return this.http.get<any>(`${this.serverUrl}/api/sessions/receive/${this.currentSessionCode}`);
+        return this.http.get<any>(`${this.serverUrl}/api/sessions/receive/${this.currentSessionCode}`).pipe(
+          // Extract the nested .data property returned by the Express backend
+          map(res => res?.data || null),
+          // If the network request fails (e.g., server down), catch the error so timer doesn't stop
+          catchError(err => {
+            console.error('Polling error:', err);
+            return [null];
+          })
+        );
       }),
-      // We only want to emit when the data actually changes to avoid redundant UI updates.
-      // We stringify it simply to detect distinct questions.
-      distinctUntilChanged((prev, curr) => JSON.stringify(prev?.data) === JSON.stringify(curr?.data))
+      distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr))
     );
   }
 
