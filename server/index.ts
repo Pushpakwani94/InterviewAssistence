@@ -13,7 +13,7 @@ import sessionRoutes from './routes/sessionRoutes';
 dotenv.config();
 
 // Connect to Database
-// connectDB(); // Commented out to prevent crash when Mongo is not installed
+connectDB(); // Re-enabled to allow session state on Vercel
 
 const app = express();
 const server = http.createServer(app);
@@ -29,29 +29,42 @@ app.use('/api/questions', questionRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/sessions', sessionRoutes);
 
-// HTTP Polling session store
-const sessions: Record<string, any> = {};
+import PollingState from './models/PollingState';
 
-// Polling Routes
-app.post('/api/sessions/send', (req, res) => {
+// Polling Routes using MongoDB
+app.post('/api/sessions/send', async (req, res) => {
   const { sessionCode, answerData } = req.body;
   if (!sessionCode) {
     return res.status(400).json({ error: 'Session code required' });
   }
-  sessions[sessionCode] = answerData;
-  console.log(`Saved answer for session ${sessionCode}`);
-  res.json({ success: true });
+  
+  try {
+    await PollingState.findOneAndUpdate(
+      { sessionCode },
+      { answerData },
+      { upsert: true, new: true }
+    );
+    console.log(`Saved answer for session ${sessionCode} to MongoDB`);
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error saving session to DB:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
-app.get('/api/sessions/receive/:sessionCode', (req, res) => {
+app.get('/api/sessions/receive/:sessionCode', async (req, res) => {
   const sessionCode = req.params.sessionCode;
-  const data = sessions[sessionCode];
-  // In a real app, you might want to clear it after reading, but since we are polling, 
-  // keeping the latest question allows late-joiners to see the current question.
-  if (data) {
-    res.json({ data });
-  } else {
-    res.json({ data: null });
+  
+  try {
+    const state = await PollingState.findOne({ sessionCode });
+    if (state && state.answerData) {
+      res.json({ data: state.answerData });
+    } else {
+      res.json({ data: null });
+    }
+  } catch (error) {
+    console.error('Error reading session from DB:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
