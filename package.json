@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "ng": "npx ng",
-    "start:frontend": "npx ng serve",
+    "start:frontend": "npx ng serve --host 0.0.0.0",
     "build:frontend": "npx ng build",
     "watch:frontend": "npx ng build --watch --configuration development",
     "test:frontend": "npx ng test",
