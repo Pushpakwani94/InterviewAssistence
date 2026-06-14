@@ -22,9 +22,9 @@ import { SocketService } from '@shared/services/socket.service';
              title="Voice Search & Auto-Send"
              (click)="toggleListening()"></i>
         </div>
-        <button class="btn btn-outline-custom text-secondary px-3"><i class="bi bi-funnel"></i> Filters</button>
-        <button class="btn btn-outline-custom text-secondary px-3 d-flex align-items-center gap-2">Latest <i class="bi bi-chevron-down" style="font-size:0.7rem"></i></button>
-        <button class="btn btn-outline-custom text-secondary px-2"><i class="bi bi-grid-3x3-gap"></i></button>
+        <button class="btn btn-outline-custom text-secondary px-3 d-none d-md-inline-block"><i class="bi bi-funnel"></i> Filters</button>
+        <button class="btn btn-outline-custom text-secondary px-3 d-none d-md-flex align-items-center gap-2">Latest <i class="bi bi-chevron-down" style="font-size:0.7rem"></i></button>
+        <button class="btn btn-outline-custom text-secondary px-2 d-none d-md-inline-block"><i class="bi bi-grid-3x3-gap"></i></button>
       </div>
 
       <!-- Table Header -->
