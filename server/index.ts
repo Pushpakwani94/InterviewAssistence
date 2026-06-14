@@ -31,7 +31,12 @@ app.use('/api/sessions', sessionRoutes);
 
 import PollingState from './models/PollingState';
 
-// Polling Routes using MongoDB
+import mongoose from 'mongoose';
+
+// Fallback memory state for serverless environments where DB connection might fail
+const memoryState = new Map<string, any>();
+
+// Polling Routes using MongoDB with memory fallback
 app.post('/api/sessions/send', async (req, res) => {
   const { sessionCode, answerData } = req.body;
   if (!sessionCode) {
@@ -39,16 +44,23 @@ app.post('/api/sessions/send', async (req, res) => {
   }
   
   try {
-    await PollingState.findOneAndUpdate(
-      { sessionCode },
-      { answerData },
-      { upsert: true, new: true }
-    );
-    console.log(`Saved answer for session ${sessionCode} to MongoDB`);
+    if (mongoose.connection.readyState === 1) {
+      await PollingState.findOneAndUpdate(
+        { sessionCode },
+        { answerData },
+        { upsert: true, new: true }
+      );
+      console.log(`Saved answer for session ${sessionCode} to MongoDB`);
+    } else {
+      memoryState.set(sessionCode, answerData);
+      console.log(`Saved answer for session ${sessionCode} to Memory (DB not connected)`);
+    }
     res.json({ success: true });
   } catch (error) {
     console.error('Error saving session to DB:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    // Fallback to memory
+    memoryState.set(sessionCode, answerData);
+    res.json({ success: true, warning: 'Saved to memory due to DB error' });
   }
 });
 
@@ -56,15 +68,26 @@ app.get('/api/sessions/receive/:sessionCode', async (req, res) => {
   const sessionCode = req.params.sessionCode;
   
   try {
-    const state = await PollingState.findOne({ sessionCode });
-    if (state && state.answerData) {
-      res.json({ data: state.answerData });
-    } else {
-      res.json({ data: null });
+    if (mongoose.connection.readyState === 1) {
+      const state = await PollingState.findOne({ sessionCode });
+      if (state && state.answerData) {
+        return res.json({ data: state.answerData });
+      }
     }
+    
+    // Fallback to memory
+    if (memoryState.has(sessionCode)) {
+      return res.json({ data: memoryState.get(sessionCode) });
+    }
+    
+    res.json({ data: null });
   } catch (error) {
     console.error('Error reading session from DB:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    // Fallback to memory
+    if (memoryState.has(sessionCode)) {
+      return res.json({ data: memoryState.get(sessionCode) });
+    }
+    res.json({ data: null, warning: 'Read from memory due to DB error' });
   }
 });
 
