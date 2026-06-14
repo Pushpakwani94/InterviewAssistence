@@ -11,21 +11,6 @@ import { SocketService } from '@shared/services/socket.service';
   template: `
     <div class="glass-panel d-flex flex-column h-100">
       
-      <!-- Toolbar -->
-      <div class="p-3 border-bottom border-dark-custom d-flex gap-2 align-items-center">
-        <div class="position-relative flex-grow-1">
-          <i class="bi bi-search position-absolute top-50 translate-middle-y text-secondary ms-3"></i>
-          <input type="text" class="input-custom w-100 ps-5 pe-5" placeholder="Search all questions across all categories..." style="font-size:0.85rem"
-                 [ngModel]="state.searchQuery()" (ngModelChange)="state.setSearch($event)">
-          <i class="bi position-absolute top-50 translate-middle-y end-0 me-3 cursor-pointer fs-5" 
-             [ngClass]="isListening ? 'bi-mic-fill text-danger pulse-anim' : 'bi-mic text-secondary'"
-             title="Voice Search & Auto-Send"
-             (click)="toggleListening()"></i>
-        </div>
-        <button class="btn btn-outline-custom text-secondary px-3 d-none d-md-inline-block"><i class="bi bi-funnel"></i> Filters</button>
-        <button class="btn btn-outline-custom text-secondary px-3 d-none d-md-flex align-items-center gap-2">Latest <i class="bi bi-chevron-down" style="font-size:0.7rem"></i></button>
-        <button class="btn btn-outline-custom text-secondary px-2 d-none d-md-inline-block"><i class="bi bi-grid-3x3-gap"></i></button>
-      </div>
 
       <!-- Table Header -->
       <div class="px-3 py-2 d-flex align-items-center text-muted-custom border-bottom border-dark-custom fw-bold" style="font-size:0.75rem;">
@@ -63,6 +48,22 @@ import { SocketService } from '@shared/services/socket.service';
           <button class="btn-page">10</button>
           <button class="btn-page"><i class="bi bi-chevron-right"></i></button>
         </div>
+      </div>
+
+      <!-- Toolbar (Moved Below) -->
+      <div class="p-3 border-top border-dark-custom d-flex gap-2 align-items-center">
+        <div class="position-relative flex-grow-1">
+          <i class="bi bi-search position-absolute top-50 translate-middle-y text-secondary ms-3"></i>
+          <input type="text" class="input-custom w-100 ps-5 pe-5" placeholder="Search all questions across all categories..." style="font-size:0.85rem"
+                 [ngModel]="state.searchQuery()" (ngModelChange)="state.setSearch($event)">
+          <i class="bi position-absolute top-50 translate-middle-y end-0 me-3 cursor-pointer fs-5" 
+             [ngClass]="isListening ? 'bi-mic-fill text-danger pulse-anim' : 'bi-mic text-secondary'"
+             title="Voice Search & Auto-Send"
+             (click)="toggleListening()"></i>
+        </div>
+        <button class="btn btn-outline-custom text-secondary px-3 d-none d-md-inline-block"><i class="bi bi-funnel"></i> Filters</button>
+        <button class="btn btn-outline-custom text-secondary px-3 d-none d-md-flex align-items-center gap-2">Latest <i class="bi bi-chevron-down" style="font-size:0.7rem"></i></button>
+        <button class="btn btn-outline-custom text-secondary px-2 d-none d-md-inline-block"><i class="bi bi-grid-3x3-gap"></i></button>
       </div>
 
     </div>
