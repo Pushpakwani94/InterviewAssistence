@@ -4,7 +4,7 @@ import { SocketService } from '@shared/services/socket.service';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-candidate',
   standalone: true,
   imports: [CommonModule],
   template: `
@@ -122,8 +122,7 @@ import { Subscription } from 'rxjs';
     }
   `]
 })
-export class AppComponent implements OnInit, OnDestroy {
-  title = 'candidate-app';
+export class CandidateComponent implements OnInit, OnDestroy {
   textScale = 1;
   sessionCode = 'JAVA123'; // Mock code for now
   connected = false;
