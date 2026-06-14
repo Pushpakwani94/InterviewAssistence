@@ -36,19 +36,7 @@ import { SocketService } from '@shared/services/socket.service';
         </div>
       </div>
 
-      <!-- Pagination -->
-      <div class="p-3 border-top border-dark-custom d-flex justify-content-between align-items-center text-muted-custom" style="font-size:0.8rem">
-        <div>Showing 1 to 10 of 98 questions</div>
-        <div class="d-flex gap-1 pagination-controls">
-          <button class="btn-page"><i class="bi bi-chevron-left"></i></button>
-          <button class="btn-page active">1</button>
-          <button class="btn-page">2</button>
-          <button class="btn-page">3</button>
-          <button class="btn-page disabled">...</button>
-          <button class="btn-page">10</button>
-          <button class="btn-page"><i class="bi bi-chevron-right"></i></button>
-        </div>
-      </div>
+
 
       <!-- Toolbar (Moved Below) -->
       <div class="p-3 border-top border-dark-custom d-flex gap-2 align-items-center">
