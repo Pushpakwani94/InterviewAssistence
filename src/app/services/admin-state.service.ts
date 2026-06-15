@@ -13,7 +13,6 @@ export interface Question {
 
 @Injectable({ providedIn: 'root' })
 export class AdminStateService {
-  sessionCode = signal(Math.random().toString(36).substring(2, 8).toUpperCase());
   isManualEntryMode = signal(false);
   isDetailPanelOpen = signal(true);
   isMobileSidebarOpen = signal(false);

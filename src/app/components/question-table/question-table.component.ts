@@ -2,7 +2,7 @@ import { Component, inject, NgZone, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminStateService } from '../../services/admin-state.service';
-import { SocketService } from '@shared/services/socket.service';
+import { SessionService } from '@shared/services/session.service';
 
 @Component({
   selector: 'app-question-table',
@@ -134,7 +134,7 @@ import { SocketService } from '@shared/services/socket.service';
 })
 export class QuestionTableComponent {
   state = inject(AdminStateService);
-  socketService = inject(SocketService);
+  sessionService = inject(SessionService);
   zone = inject(NgZone);
   cdr = inject(ChangeDetectorRef);
   
@@ -282,6 +282,6 @@ export class QuestionTableComponent {
       explanation: q.explanation,
       difficulty: q.difficulty
     };
-    this.socketService.sendAnswer(this.state.sessionCode(), payload);
+    this.sessionService.sendAnswer(payload);
   }
 }

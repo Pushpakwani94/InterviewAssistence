@@ -1,5 +1,5 @@
 import express from 'express';
-import { createSession, getSessions, joinSession, endSession, getSessionHistory, getSessionStats } from '../controllers/sessionController';
+import { createSession, getSessions, getSessionHistory, getSessionStats, sendAnswer, getCurrentAnswer } from '../controllers/sessionController';
 import { protect, admin } from '../middleware/authMiddleware';
 
 const router = express.Router();
@@ -8,9 +8,9 @@ router.route('/')
   .post(protect, admin, createSession)
   .get(protect, admin, getSessions);
 
-router.post('/join', joinSession);
-router.put('/:id/end', protect, admin, endSession);
-router.get('/:sessionCode/history', getSessionHistory);
-router.get('/:sessionCode/stats', protect, admin, getSessionStats);
+router.get('/global/history', getSessionHistory);
+router.get('/global/stats', protect, admin, getSessionStats);
+router.post('/global/send', sendAnswer);
+router.get('/global/current', getCurrentAnswer);
 
 export default router;

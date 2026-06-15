@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminStateService } from '../../services/admin-state.service';
-import { SocketService } from '@shared/services/socket.service';
+import { SessionService } from '@shared/services/session.service';
 
 @Component({
   selector: 'app-question-detail',
@@ -153,7 +153,7 @@ import { SocketService } from '@shared/services/socket.service';
 })
 export class QuestionDetailComponent {
   state = inject(AdminStateService);
-  socketService = inject(SocketService);
+  sessionService = inject(SessionService);
 
   sendToCandidate(q: any) {
     const payload = {
@@ -162,6 +162,6 @@ export class QuestionDetailComponent {
       explanation: q.explanation,
       difficulty: q.difficulty
     };
-    this.socketService.sendAnswer(this.state.sessionCode(), payload);
+    this.sessionService.sendAnswer(payload);
   }
 }

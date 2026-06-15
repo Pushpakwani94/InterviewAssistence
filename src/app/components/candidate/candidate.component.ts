@@ -36,9 +36,6 @@ import { FormsModule } from '@angular/forms';
           </div>
         </div>
         <div class="d-flex gap-2 gap-sm-3 fs-4 align-items-center">
-          <span class="badge border border-neon text-neon px-2 py-1 fw-bold" style="font-size:0.75rem">
-            {{ sessionCode }}
-          </span>
           <i class="bi bi-moon cursor-pointer"></i>
           <i class="bi bi-arrows-fullscreen cursor-pointer d-none d-sm-block"></i>
         </div>
@@ -46,19 +43,6 @@ import { FormsModule } from '@angular/forms';
 
       <!-- Main Content -->
       <div class="p-3 flex-grow-1">
-        
-        <ng-container *ngIf="!sessionCode; else sessionActiveTpl">
-          <div class="d-flex flex-column align-items-center justify-content-center mt-5 text-center">
-            <h3 class="text-neon mb-3">Join a Session</h3>
-            <p class="text-secondary mb-4">Enter the session code provided by the admin.</p>
-            <div class="input-group mb-3" style="max-width: 300px;">
-              <input type="text" class="form-control" placeholder="Session Code" [(ngModel)]="inputSessionCode" style="background: var(--bg-panel); color: white; border-color: var(--border-color);">
-              <button class="btn btn-outline-neon" type="button" (click)="joinManualSession()">Join</button>
-            </div>
-          </div>
-        </ng-container>
-
-        <ng-template #sessionActiveTpl>
           <!-- Reconnecting Overlay -->
           <div *ngIf="connectionStatus === 'reconnecting'" class="alert border-warning text-warning bg-panel mb-3 d-flex align-items-center gap-2">
             <div class="spinner-border spinner-border-sm" role="status"></div>
@@ -116,7 +100,6 @@ import { FormsModule } from '@angular/forms';
             <!-- Emptied as requested -->
           </div>
         </ng-template>
-        </ng-template>
       </div>
 
       <!-- Bottom Navigation -->
@@ -154,76 +137,50 @@ import { FormsModule } from '@angular/forms';
 })
 export class CandidateComponent implements OnInit, OnDestroy {
   textScale = 1;
-  sessionCode = '';
-  inputSessionCode = '';
-  connected = false;
-  connectionStatus: 'connected' | 'disconnected' | 'reconnecting' = 'disconnected';
   
   questionHistory: any[] = [];
   currentIndex = -1;
+  currentQuestion: any = null;
   
   showMenu = false;
   private answerSub!: Subscription;
-  private statusSub!: Subscription;
 
   constructor(
-    private socketService: SocketService, 
+    private sessionService: SessionService, 
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private router: Router
   ) {}
 
   ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      const code = params.get('sessionCode');
-      if (code) {
-        this.sessionCode = code;
-        this.initializeSession();
-      }
-    });
-  }
-
-  joinManualSession() {
-    if (this.inputSessionCode.trim()) {
-      this.router.navigate(['/candidate', this.inputSessionCode.trim().toUpperCase()]);
-    }
-  }
-
-  get currentQuestion(): any {
-    if (this.currentIndex >= 0 && this.currentIndex < this.questionHistory.length) {
-      return this.questionHistory[this.currentIndex];
-    }
-    return null;
+    this.initializeSession();
   }
 
   initializeSession() {
-    this.socketService.connect();
-    this.socketService.joinSession(this.sessionCode);
-    this.connected = true;
+    this.sessionService.joinSession();
 
     // Fetch History
-    this.socketService.getHistory(this.sessionCode).subscribe({
-      next: (history) => {
+    this.sessionService.getHistory().subscribe({
+      next: (history: any) => {
         if (history && history.length > 0) {
           this.questionHistory = history;
           this.currentIndex = history.length - 1;
+          this.currentQuestion = this.questionHistory[this.currentIndex];
           this.cdr.detectChanges();
         }
       },
-      error: (err) => console.error('Failed to fetch history', err)
+      error: (err: any) => console.error('Failed to fetch history', err)
     });
 
-    this.statusSub = this.socketService.connectionStatus$.subscribe(status => {
-      this.connectionStatus = status;
-      this.cdr.detectChanges();
-    });
+    this.answerSub = this.sessionService.onReceiveAnswer().subscribe((data: any) => {
+      if (!data) return; // Prevent crash when no question is active yet
 
-    this.answerSub = this.socketService.onReceiveAnswer().subscribe((data) => {
       // Add to history if not duplicate (simple check)
       if (this.questionHistory.length === 0 || this.questionHistory[this.questionHistory.length - 1].question !== data.question) {
         this.questionHistory.push(data);
         // Auto-navigate to latest question when a new one arrives
         this.currentIndex = this.questionHistory.length - 1;
+        this.currentQuestion = this.questionHistory[this.currentIndex];
         this.cdr.detectChanges();
       }
     });
@@ -233,6 +190,7 @@ export class CandidateComponent implements OnInit, OnDestroy {
     const newIndex = this.currentIndex + direction;
     if (newIndex >= 0 && newIndex < this.questionHistory.length) {
       this.currentIndex = newIndex;
+      this.currentQuestion = this.questionHistory[this.currentIndex];
       this.cdr.detectChanges();
     }
   }
@@ -241,10 +199,6 @@ export class CandidateComponent implements OnInit, OnDestroy {
     if (this.answerSub) {
       this.answerSub.unsubscribe();
     }
-    if (this.statusSub) {
-      this.statusSub.unsubscribe();
-    }
-    this.socketService.disconnect();
   }
 
   increaseTextSize() {

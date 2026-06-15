@@ -11,15 +11,6 @@ import { AdminStateService } from '../../services/admin-state.service';
       </div>
 
       <div class="d-flex align-items-center gap-2 gap-md-4">
-        <!-- Session Code Badge -->
-        <div class="session-badge d-none d-sm-flex align-items-center rounded border border-secondary px-2 px-md-3 py-1 bg-panel">
-          <div class="me-2 me-md-3">
-            <small class="text-secondary d-block" style="font-size:0.65rem; line-height: 1;">Session Code</small>
-            <span class="text-accent-blue fw-bold" style="font-size:0.8rem;">{{ state.sessionCode() }}</span>
-          </div>
-          <button class="btn-icon p-1 text-secondary" (click)="copySessionCode()"><i class="bi bi-copy" style="font-size:0.8rem;"></i></button>
-        </div>
-
         <!-- Icons -->
         <div class="d-flex align-items-center gap-2">
           <button class="btn-icon position-relative">
@@ -57,11 +48,4 @@ import { AdminStateService } from '../../services/admin-state.service';
 })
 export class NavbarComponent {
   state = inject(AdminStateService);
-
-  copySessionCode() {
-    const code = this.state.sessionCode();
-    navigator.clipboard.writeText(code).then(() => {
-      alert(`Session code ${code} copied to clipboard!`);
-    });
-  }
 }

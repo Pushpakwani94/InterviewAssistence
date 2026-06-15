@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SocketService } from '@shared/services/socket.service';
+import { SessionService } from '@shared/services/session.service';
 import { AdminStateService } from '../../services/admin-state.service';
 import { Subject } from 'rxjs';
 
@@ -161,15 +161,13 @@ export class AdminComponent implements OnInit {
   customCode = '';
   showToast = false;
 
-  constructor(private socketService: SocketService) {}
+  constructor(private sessionService: SessionService) {}
 
   ngOnInit() {
-    this.socketService.connect();
-    
     // Listen for any answer sent from anywhere (like QuestionTable)
-    const originalSend = this.socketService.sendAnswer.bind(this.socketService);
-    this.socketService.sendAnswer = (sessionCode: string, payload: any) => {
-      originalSend(sessionCode, payload);
+    const originalSend = this.sessionService.sendAnswer.bind(this.sessionService);
+    this.sessionService.sendAnswer = (payload: any) => {
+      originalSend(payload);
       this.triggerToast();
     };
   }
@@ -187,7 +185,7 @@ export class AdminComponent implements OnInit {
       finalAnswer += '\n\nCode Example:\n' + this.customCode;
     }
 
-    this.socketService.sendAnswer(this.state.sessionCode(), {
+    this.sessionService.sendAnswer({
       question: this.customQuestion,
       answer: finalAnswer,
       explanation: 'Custom Help Sent by Admin',

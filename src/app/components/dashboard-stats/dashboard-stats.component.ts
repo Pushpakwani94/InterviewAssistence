@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SocketService } from '../../shared/services/socket.service';
+import { SessionService } from '../../shared/services/session.service';
 
 @Component({
   selector: 'app-dashboard-stats',
@@ -149,10 +149,10 @@ import { SocketService } from '../../shared/services/socket.service';
 export class DashboardStatsComponent implements OnInit {
   stats: { connectedCount?: number, questionsSentCount?: number } = { connectedCount: 0, questionsSentCount: 0 };
   
-  constructor(private socketService: SocketService) {}
+  constructor(private sessionService: SessionService) {}
   
   ngOnInit() {
-    this.socketService.statsSubject.subscribe(stats => {
+    this.sessionService.statsSubject.subscribe(stats => {
       this.stats = { ...this.stats, ...stats };
     });
   }
