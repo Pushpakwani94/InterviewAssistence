@@ -12,7 +12,7 @@ const generateSessionCode = (technology: string) => {
 // @desc    Create a new interview session
 // @route   POST /api/sessions
 // @access  Private/Admin
-export const createSession = async (req: Request, res: Response) => {
+export const createSession = async (req: Request, res: Response): Promise<void> => {
   try {
     const { sessionName, candidateName, technology, startTime, endTime } = req.body;
     let sessionCode = generateSessionCode(technology);
@@ -41,7 +41,7 @@ export const createSession = async (req: Request, res: Response) => {
 // @desc    Get all sessions for the admin
 // @route   GET /api/sessions
 // @access  Private/Admin
-export const getSessions = async (req: Request, res: Response) => {
+export const getSessions = async (req: Request, res: Response): Promise<void> => {
   try {
     const sessions = await Session.find().populate('createdBy', 'name email').sort('-createdAt');
     res.json(sessions);
@@ -53,7 +53,7 @@ export const getSessions = async (req: Request, res: Response) => {
 // @desc    Candidate joins a session using session code
 // @route   POST /api/sessions/join
 // @access  Public
-export const joinSession = async (req: Request, res: Response) => {
+export const joinSession = async (req: Request, res: Response): Promise<void> => {
   try {
     const { sessionCode } = req.body;
     const session = await Session.findOne({ sessionCode, isActive: true });
@@ -71,9 +71,9 @@ export const joinSession = async (req: Request, res: Response) => {
 // @desc    End an interview session
 // @route   PUT /api/sessions/:id/end
 // @access  Private/Admin
-export const endSession = async (req: Request, res: Response) => {
+export const endSession = async (req: Request, res: Response): Promise<void> => {
   try {
-    const session = await Session.findById(req.params.id);
+    const session = await Session.findById(req.params['id']);
 
     if (session) {
       session.isActive = false;
@@ -90,7 +90,7 @@ export const endSession = async (req: Request, res: Response) => {
 // @desc    Get session history (all questions sent during session)
 // @route   GET /api/sessions/:sessionCode/history
 // @access  Public
-export const getSessionHistory = async (req: Request, res: Response) => {
+export const getSessionHistory = async (req: Request, res: Response): Promise<void> => {
   try {
     const { sessionCode } = req.params;
     const history = await SessionHistory.find({ sessionCode }).sort('sentAt');
@@ -103,7 +103,7 @@ export const getSessionHistory = async (req: Request, res: Response) => {
 // @desc    Get session stats
 // @route   GET /api/sessions/:sessionCode/stats
 // @access  Private/Admin
-export const getSessionStats = async (req: Request, res: Response) => {
+export const getSessionStats = async (req: Request, res: Response): Promise<void> => {
   try {
     const { sessionCode } = req.params;
     const questionsSentCount = await SessionHistory.countDocuments({ sessionCode });

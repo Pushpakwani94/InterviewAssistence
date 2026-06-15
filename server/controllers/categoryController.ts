@@ -4,7 +4,7 @@ import Category from '../models/Category';
 // @desc    Get all categories
 // @route   GET /api/categories
 // @access  Private
-export const getCategories = async (req: Request, res: Response) => {
+export const getCategories = async (req: Request, res: Response): Promise<any> => {
   try {
     const categories = await Category.find({});
     res.json(categories);
@@ -16,7 +16,7 @@ export const getCategories = async (req: Request, res: Response) => {
 // @desc    Create a category
 // @route   POST /api/categories
 // @access  Private/Admin
-export const createCategory = async (req: Request, res: Response) => {
+export const createCategory = async (req: Request, res: Response): Promise<any> => {
   const { name, technology } = req.body;
 
   try {

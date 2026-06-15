@@ -18,4 +18,4 @@ const SessionHistorySchema: Schema = new Schema({
   sentAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.models.SessionHistory || mongoose.model<ISessionHistory>('SessionHistory', SessionHistorySchema);
+export default mongoose.models['SessionHistory'] || mongoose.model<ISessionHistory>('SessionHistory', SessionHistorySchema);

@@ -6,7 +6,7 @@ import generateToken from '../utils/generateToken';
 // @desc    Auth user & get token
 // @route   POST /api/auth/login
 // @access  Public
-export const authUser = async (req: Request, res: Response) => {
+export const authUser = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
 
   try {
@@ -31,7 +31,7 @@ export const authUser = async (req: Request, res: Response) => {
 // @desc    Register a new user (Admin)
 // @route   POST /api/auth/register
 // @access  Public (Should be Super Admin in prod)
-export const registerUser = async (req: Request, res: Response) => {
+export const registerUser = async (req: Request, res: Response): Promise<any> => {
   const { name, email, password, role } = req.body;
 
   try {

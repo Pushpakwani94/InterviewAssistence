@@ -5,7 +5,7 @@ import Category from '../models/Category';
 // @desc    Get all questions (with optional filters)
 // @route   GET /api/questions
 // @access  Private
-export const getQuestions = async (req: Request, res: Response) => {
+export const getQuestions = async (req: Request, res: Response): Promise<any> => {
   try {
     const { category, technology, difficulty, search } = req.query;
     let query: any = {};
@@ -28,11 +28,12 @@ export const getQuestions = async (req: Request, res: Response) => {
 // @desc    Get a single question
 // @route   GET /api/questions/:id
 // @access  Private
-export const getQuestionById = async (req: Request, res: Response) => {
+export const getQuestionById = async (req: Request, res: Response): Promise<any> => {
   try {
-    const question = await Question.findById(req.params.id).populate('category', 'name technology');
+    const question = await Question.findById(req.params['id']).populate('category', 'name technology');
     if (question) {
       res.json(question);
+      return;
     } else {
       res.status(404).json({ message: 'Question not found' });
     }
@@ -44,7 +45,7 @@ export const getQuestionById = async (req: Request, res: Response) => {
 // @desc    Create a new question
 // @route   POST /api/questions
 // @access  Private/Admin
-export const createQuestion = async (req: Request, res: Response) => {
+export const createQuestion = async (req: Request, res: Response): Promise<any> => {
   try {
     const { question, answer, explanation, example, keywords, difficulty, technology, categoryId } = req.body;
 
@@ -74,9 +75,9 @@ export const createQuestion = async (req: Request, res: Response) => {
 // @desc    Update a question
 // @route   PUT /api/questions/:id
 // @access  Private/Admin
-export const updateQuestion = async (req: Request, res: Response) => {
+export const updateQuestion = async (req: Request, res: Response): Promise<any> => {
   try {
-    const updatedQuestion = await Question.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedQuestion = await Question.findByIdAndUpdate(req.params['id'], req.body, { new: true });
     if (updatedQuestion) {
       res.json(updatedQuestion);
     } else {
@@ -90,11 +91,12 @@ export const updateQuestion = async (req: Request, res: Response) => {
 // @desc    Delete a question
 // @route   DELETE /api/questions/:id
 // @access  Private/Admin
-export const deleteQuestion = async (req: Request, res: Response) => {
+export const deleteQuestion = async (req: Request, res: Response): Promise<any> => {
   try {
-    const question = await Question.findByIdAndDelete(req.params.id);
+    const question = await Question.findByIdAndDelete(req.params['id']);
     if (question) {
       res.json({ message: 'Question removed' });
+      return;
     } else {
       res.status(404).json({ message: 'Question not found' });
     }

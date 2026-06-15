@@ -10,4 +10,4 @@ const PollingStateSchema: Schema = new Schema({
   answerData: { type: Schema.Types.Mixed, required: true },
 }, { timestamps: true });
 
-export default mongoose.models.PollingState || mongoose.model<IPollingState>('PollingState', PollingStateSchema);
+export default mongoose.models['PollingState'] || mongoose.model<IPollingState>('PollingState', PollingStateSchema);

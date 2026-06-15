@@ -11,7 +11,7 @@ export const upload = multer({ storage });
 // @desc    Upload Questions via JSON, Excel, or CSV
 // @route   POST /api/upload
 // @access  Private/Admin
-export const uploadQuestions = async (req: Request, res: Response) => {
+export const uploadQuestions = async (req: Request, res: Response): Promise<any> => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded' });
   }
