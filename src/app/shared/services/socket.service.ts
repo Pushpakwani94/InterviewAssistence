@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, timer, of } from 'rxjs';
-import { switchMap, distinctUntilChanged, map, catchError } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { io, Socket } from 'socket.io-client';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +9,10 @@ import { switchMap, distinctUntilChanged, map, catchError } from 'rxjs/operators
 export class SocketService {
   private serverUrl = 'http://localhost:5000'; // Fallback local dev URL
   private currentSessionCode: string | null = null;
+  private socket: Socket | null = null;
+  private answerSubject = new Subject<any>();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private ngZone: NgZone) {
     if (typeof window !== 'undefined') {
       const hostname = window.location.hostname;
       // If deployed to Vercel (or not local/IP), use the same origin without port
@@ -27,42 +29,40 @@ export class SocketService {
     if (url) {
       this.serverUrl = url;
     }
+    if (!this.socket) {
+      this.socket = io(this.serverUrl);
+      this.socket.on('receive_answer', (data) => {
+        this.ngZone.run(() => {
+          this.answerSubject.next(data);
+        });
+      });
+    }
   }
 
   joinSession(sessionCode: string): void {
     this.currentSessionCode = sessionCode;
-    console.log(`Joined session for polling: ${sessionCode}`);
+    if (this.socket) {
+      this.socket.emit('join_session', sessionCode);
+      console.log(`Joined session via Socket.io: ${sessionCode}`);
+    }
   }
 
   sendAnswer(sessionCode: string, answerData: any): void {
-    this.http.post(`${this.serverUrl}/api/sessions/send`, { sessionCode, answerData }).subscribe({
-      next: () => console.log('Successfully sent answer to candidate'),
-      error: (err) => console.error('Error sending answer:', err)
-    });
+    if (this.socket) {
+      this.socket.emit('send_answer', { sessionCode, answerData });
+      console.log('Successfully sent answer to candidate via Socket.io');
+    }
   }
 
   onReceiveAnswer(): Observable<any> {
-    // Poll every 2 seconds
-    return timer(0, 2000).pipe(
-      switchMap(() => {
-        if (!this.currentSessionCode) {
-          return of(null);
-        }
-        return this.http.get<any>(`${this.serverUrl}/api/sessions/receive/${this.currentSessionCode}?t=${new Date().getTime()}`).pipe(
-          // Extract the nested .data property returned by the Express backend
-          map(res => res?.data || null),
-          // If the network request fails (e.g., server down), catch the error so timer doesn't stop
-          catchError(err => {
-            console.error('Polling error:', err);
-            return of(null);
-          })
-        );
-      }),
-      distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr))
-    );
+    return this.answerSubject.asObservable();
   }
 
   disconnect(): void {
     this.currentSessionCode = null;
+    if (this.socket) {
+      this.socket.disconnect();
+      this.socket = null;
+    }
   }
 }

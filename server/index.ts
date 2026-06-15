@@ -36,64 +36,58 @@ import mongoose from 'mongoose';
 // Fallback memory state for serverless environments where DB connection might fail
 const memoryState = new Map<string, any>();
 
-// Polling Routes using MongoDB with memory fallback
-app.post('/api/sessions/send', async (req, res) => {
-  const { sessionCode, answerData } = req.body;
-  if (!sessionCode) {
-    return res.status(400).json({ error: 'Session code required' });
-  }
-  
-  try {
-    if (mongoose.connection.readyState === 1) {
-      await PollingState.findOneAndUpdate(
-        { sessionCode },
-        { answerData },
-        { upsert: true, new: true }
-      );
-      console.log(`Saved answer for session ${sessionCode} to MongoDB`);
-    } else {
-      memoryState.set(sessionCode, answerData);
-      console.log(`Saved answer for session ${sessionCode} to Memory (DB not connected)`);
-    }
-    res.json({ success: true });
-  } catch (error) {
-    console.error('Error saving session to DB:', error);
-    // Fallback to memory
-    memoryState.set(sessionCode, answerData);
-    res.json({ success: true, warning: 'Saved to memory due to DB error' });
+import { Server } from 'socket.io';
+
+// Initialize Socket.io
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
   }
 });
 
-app.get('/api/sessions/receive/:sessionCode', async (req, res) => {
-  const sessionCode = req.params.sessionCode;
-  
-  // Prevent Vercel edge network and browser from caching the polling GET request
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
-  
-  try {
+io.on('connection', (socket) => {
+  console.log(`Socket connected: ${socket.id}`);
+
+  // Candidate joins a session room
+  socket.on('join_session', (sessionCode) => {
+    socket.join(sessionCode);
+    console.log(`Socket ${socket.id} joined session ${sessionCode}`);
+    
+    // Send the last known state from memory if available
+    if (memoryState.has(sessionCode)) {
+      socket.emit('receive_answer', memoryState.get(sessionCode));
+    }
+  });
+
+  // Admin sends a question
+  socket.on('send_answer', async ({ sessionCode, answerData }) => {
+    console.log(`Received answer for session ${sessionCode}`);
+    
+    // Broadcast to everyone in the room
+    io.to(sessionCode).emit('receive_answer', answerData);
+    
+    // Save to Memory
+    memoryState.set(sessionCode, answerData);
+
+    // Save to DB asynchronously if connected
     if (mongoose.connection.readyState === 1) {
-      const state = await PollingState.findOne({ sessionCode });
-      if (state && state.answerData) {
-        return res.json({ data: state.answerData });
+      try {
+        await PollingState.findOneAndUpdate(
+          { sessionCode },
+          { answerData },
+          { upsert: true, new: true }
+        );
+        console.log(`Saved answer for session ${sessionCode} to MongoDB`);
+      } catch (error) {
+        console.error('Error saving session to DB:', error);
       }
     }
-    
-    // Fallback to memory
-    if (memoryState.has(sessionCode)) {
-      return res.json({ data: memoryState.get(sessionCode) });
-    }
-    
-    res.json({ data: null });
-  } catch (error) {
-    console.error('Error reading session from DB:', error);
-    // Fallback to memory
-    if (memoryState.has(sessionCode)) {
-      return res.json({ data: memoryState.get(sessionCode) });
-    }
-    res.json({ data: null, warning: 'Read from memory due to DB error' });
-  }
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`Socket disconnected: ${socket.id}`);
+  });
 });
 
 // Basic route
