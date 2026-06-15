@@ -113,10 +113,7 @@ import { FormsModule } from '@angular/forms';
 
         <ng-template #waitingTpl>
           <div class="text-center py-5 mt-5">
-            <div class="spinner-border text-neon mb-3" role="status">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-            <h5 class="text-secondary">Waiting for the next question...</h5>
+            <!-- Emptied as requested -->
           </div>
         </ng-template>
         </ng-template>
