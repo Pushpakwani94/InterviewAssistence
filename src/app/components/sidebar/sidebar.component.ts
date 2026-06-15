@@ -43,6 +43,11 @@ import { AdminStateService } from '../../services/admin-state.service';
               <i class="bi bi-pencil-square" [ngClass]="!state.isManualEntryMode() ? 'text-neon' : ''"></i> Custom Send (Help)
             </a>
           </li>
+          <li class="nav-item mt-2 pt-2 border-top border-dark-custom">
+            <a href="/candidate" target="_blank" class="nav-link px-3 py-2 rounded d-flex align-items-center gap-3 text-secondary hover-bg">
+              <i class="bi bi-mortarboard-fill text-success"></i> Open Student View
+            </a>
+          </li>
         </ul>
 
         <!-- Technologies -->
