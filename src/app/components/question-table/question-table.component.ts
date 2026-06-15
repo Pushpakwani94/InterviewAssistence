@@ -14,51 +14,60 @@ import { SocketService } from '@shared/services/socket.service';
 
       <!-- Table Header -->
       <div class="px-3 py-2 d-flex align-items-center text-muted-custom border-bottom border-dark-custom fw-bold" style="font-size:0.75rem;">
-        <div style="width: 40px">#</div>
+        <div style="width: 30px">#</div>
         <div class="flex-grow-1">Question</div>
       </div>
 
       <!-- Question List -->
       <div class="flex-grow-1 overflow-auto list-scroll">
-        <div class="question-row px-3 py-3 d-flex align-items-center border-bottom border-dark-custom" 
+        <div class="question-row px-2 px-md-3 py-2 py-md-3 d-flex align-items-center border-bottom border-dark-custom gap-2 gap-md-3" 
              *ngFor="let q of state.filteredQuestions(); let i = index"
              [class.active-row]="state.selectedQuestion()?.id === q.id"
              (click)="state.selectQuestion(q); sendDirectly(q)">
           
-          <div style="width: 40px" class="text-secondary fs-7">{{ i + 1 }}</div>
+          <div style="width: 25px" class="text-secondary fs-7 text-center flex-shrink-0">{{ i + 1 }}</div>
           
-          <div class="flex-grow-1 pe-2 text-main" style="font-size:0.85rem;">
-            {{ q.title }}
+          <!-- Icon Circle -->
+          <div class="icon-circle d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" 
+               [style.background]="getIconBg(i)">
+            <i class="bi" [ngClass]="getIconClass(i)" [style.color]="getIconColor(i)" style="font-size: 1.1rem;"></i>
           </div>
           
-          <div>
-            <button class="btn btn-sm btn-outline-custom text-primary-custom px-3 py-1 d-flex align-items-center gap-1" 
+          <div class="flex-grow-1 d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-1 gap-sm-2 text-truncate pe-1 pe-md-2">
+            <div class="text-main text-truncate" style="font-size:0.9rem; font-weight: 500; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+              {{ q.title }}
+            </div>
+            <span class="badge border border-secondary text-secondary px-2 py-1 flex-shrink-0 mt-1 mt-sm-0" 
+                  style="font-size: 0.65rem; font-weight: normal; background-color: rgba(255,255,255,0.03) !important;">
+              {{ q.technology || 'Java' }}
+            </span>
+          </div>
+          
+          <div class="flex-shrink-0">
+            <button class="btn btn-sm btn-send-custom px-2 px-sm-3 py-1 d-flex align-items-center gap-2" 
                     (click)="sendDirectly(q); $event.stopPropagation()">
-              <i class="bi bi-send-fill" style="font-size: 0.75rem;"></i> Send
+              <i class="bi bi-send-fill" style="font-size: 0.8rem;"></i>
+              <span class="d-none d-sm-inline">Send</span>
             </button>
           </div>
           
-          <!-- Columns removed per user request -->
-
         </div>
       </div>
 
 
 
       <!-- Toolbar (Moved Below) -->
-      <div class="p-2 p-md-3 border-top border-dark-custom d-flex gap-2 align-items-center">
-        <div class="position-relative flex-grow-1">
+      <div class="p-2 p-md-3 border-top border-dark-custom d-flex gap-2 align-items-center search-toolbar">
+        <div class="position-relative flex-grow-1 search-input-wrapper">
           <i class="bi bi-search position-absolute top-50 translate-middle-y text-secondary ms-3"></i>
-          <input type="text" class="input-custom w-100 ps-5 pe-5" placeholder="Search questions..." style="font-size:0.85rem"
+          <input type="text" class="input-custom w-100 ps-5 pe-5 py-2" placeholder="Search questions..." style="font-size:0.85rem; border-radius: 8px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: white;"
                  [ngModel]="state.searchQuery()" (ngModelChange)="state.setSearch($event)">
           <i class="bi position-absolute top-50 translate-middle-y end-0 me-3 cursor-pointer fs-5" 
              [ngClass]="isListening ? 'bi-mic-fill text-danger pulse-anim' : 'bi-mic text-secondary'"
              title="Voice Search & Auto-Send"
              (click)="toggleListening()"></i>
         </div>
-        <button class="btn btn-outline-custom text-secondary px-3 d-none d-md-inline-block"><i class="bi bi-funnel"></i> Filters</button>
-        <button class="btn btn-outline-custom text-secondary px-3 d-none d-md-flex align-items-center gap-2">Latest <i class="bi bi-chevron-down" style="font-size:0.7rem"></i></button>
-        <button class="btn btn-outline-custom text-secondary px-2 d-none d-md-inline-block"><i class="bi bi-grid-3x3-gap"></i></button>
+        <button class="btn btn-outline-custom text-secondary px-3 d-none d-md-flex align-items-center gap-2" style="border-radius: 8px;"><i class="bi bi-funnel"></i> Filters</button>
       </div>
 
     </div>
@@ -74,38 +83,52 @@ import { SocketService } from '@shared/services/socket.service';
     }
     .btn-outline-custom:hover { background: rgba(255,255,255,0.05); color: var(--text-main) !important; }
     
+    .btn-send-custom {
+      border: 1px solid rgba(115, 165, 248, 0.3);
+      background: rgba(115, 165, 248, 0.05);
+      color: #73a5f8;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .btn-send-custom:hover {
+      background: rgba(115, 165, 248, 0.15);
+      color: #92bbf9;
+      border-color: rgba(115, 165, 248, 0.5);
+    }
+    
+    .icon-circle {
+      width: 40px;
+      height: 40px;
+    }
+    
+    @media (max-width: 576px) {
+      .icon-circle { width: 32px; height: 32px; }
+      .icon-circle i { font-size: 0.9rem !important; }
+      .btn-send-custom { padding: 0.3rem 0.6rem !important; }
+      .btn-send-custom i { font-size: 0.9rem !important; }
+      .btn-send-custom span { display: none; }
+    }
+    
     .question-row { transition: all 0.2s; cursor: pointer; }
     .question-row:hover { background: rgba(255,255,255,0.02); }
     .active-row { background: rgba(255,255,255,0.04) !important; }
     
     .fs-7 { font-size: 0.85rem; }
     
-    .btn-page {
-      background: transparent;
-      border: none;
-      color: var(--text-secondary);
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-      font-size: 0.8rem;
-    }
-    .btn-page:hover:not(.disabled):not(.active) { background: rgba(255,255,255,0.05); }
-    .btn-page.active { background: var(--primary-blue); color: white; }
-    .btn-page.disabled { opacity: 0.5; cursor: default; }
-
     .list-scroll { scrollbar-width: none; }
     .list-scroll::-webkit-scrollbar { display: none; }
-    .text-primary-custom { color: var(--primary-blue); }
-    .hover-scale { transition: transform 0.2s; }
-    .hover-scale:hover { transform: scale(1.2); color: var(--accent-blue) !important; }
     .pulse-anim { animation: pulse 1s infinite; }
     @keyframes pulse {
       0% { transform: scale(1); opacity: 1; }
       50% { transform: scale(1.2); opacity: 0.7; }
       100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .input-custom:focus {
+      outline: none;
+      border-color: rgba(115, 165, 248, 0.5) !important;
+      box-shadow: 0 0 0 2px rgba(115, 165, 248, 0.2);
     }
   `]
 })
@@ -117,6 +140,30 @@ export class QuestionTableComponent {
   
   isListening = false;
   recognition: any;
+
+  // Icon mapping array based on the user's design
+  private icons = [
+    { class: 'bi-cup-hot', color: '#b28df8', bg: 'rgba(178, 141, 248, 0.15)' },
+    { class: 'bi-layers', color: '#b28df8', bg: 'rgba(178, 141, 248, 0.15)' },
+    { class: 'bi-code-slash', color: '#b28df8', bg: 'rgba(178, 141, 248, 0.15)' },
+    { class: 'bi-lock', color: '#b28df8', bg: 'rgba(178, 141, 248, 0.15)' },
+    { class: 'bi-diagram-2', color: '#b28df8', bg: 'rgba(178, 141, 248, 0.15)' },
+    { class: 'bi-puzzle', color: '#b28df8', bg: 'rgba(178, 141, 248, 0.15)' },
+    { class: 'bi-triangle', color: '#b28df8', bg: 'rgba(178, 141, 248, 0.15)' },
+    { class: 'bi-box', color: '#b28df8', bg: 'rgba(178, 141, 248, 0.15)' }
+  ];
+
+  getIconClass(index: number): string {
+    return this.icons[index % this.icons.length].class;
+  }
+
+  getIconBg(index: number): string {
+    return this.icons[index % this.icons.length].bg;
+  }
+
+  getIconColor(index: number): string {
+    return this.icons[index % this.icons.length].color;
+  }
 
   constructor() {
     this.initSpeechRecognition();

@@ -88,6 +88,7 @@ import { Subscription } from 'rxjs';
             <h5 class="text-secondary">Waiting for the next question...</h5>
           </div>
         </ng-template>
+      </div>
 
       <!-- Bottom Navigation -->
       <nav class="bottom-nav">
