@@ -84,17 +84,17 @@ import { SessionService } from '@shared/services/session.service';
     .btn-outline-custom:hover { background: rgba(0,0,0,0.05); color: var(--text-main) !important; }
     
     .btn-send-custom {
-      border: 1px solid rgba(115, 165, 248, 0.3);
-      background: rgba(115, 165, 248, 0.05);
-      color: #73a5f8;
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      background: rgba(249, 115, 22, 0.05);
+      color: #EA580C;
       font-weight: 500;
       border-radius: 6px;
       transition: all 0.2s;
     }
     .btn-send-custom:hover {
-      background: rgba(115, 165, 248, 0.15);
-      color: #92bbf9;
-      border-color: rgba(115, 165, 248, 0.5);
+      background: rgba(249, 115, 22, 0.15);
+      color: #F97316;
+      border-color: rgba(249, 115, 22, 0.5);
     }
     
     .icon-circle {

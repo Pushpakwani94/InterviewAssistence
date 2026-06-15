@@ -3,17 +3,17 @@
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css");
 
 :root {
-  --bg-main: #F1F5F9;
-  --bg-panel: #FFFFFF;
-  --bg-card: #FFFFFF;
-  --border-color: #E2E8F0;
+  --bg-main: #FFF7ED; /* Light orange background */
+  --bg-panel: #FFEDD5; /* Soft orange for panels */
+  --bg-card: #FFFFFF; /* White for cards */
+  --border-color: #FDBA74; /* Orange border */
   
-  --text-main: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #94A3B8;
+  --text-main: #431407; /* Very dark orange/brown text */
+  --text-secondary: #9A3412; /* Dark orange text */
+  --text-muted: #EA580C; /* Medium orange text */
   
-  --primary-blue: #2563EB;
-  --accent-blue: #3B82F6;
+  --primary-blue: #F97316; /* Primary Orange (reusing the variable name to keep classes intact) */
+  --accent-blue: #FB923C; /* Accent Orange */
   --success: #10B981;
   --warning: #F59E0B;
   --danger: #EF4444;
@@ -145,8 +145,8 @@ body {
 }
 
 /* Candidate Panel Specific Styles */
-.text-neon { color: #00F0FF; }
-.text-green { color: #10B981; }
+.text-neon { color: #EA580C; } /* Changed to Orange for theme */
+.text-green { color: #F97316; } /* Changed to Orange for theme */
 .text-purple { color: #8B5CF6; }
 .text-huge { font-size: calc(1.5rem * var(--text-scale, 1)); font-weight: 700; }
 .text-large { font-size: calc(1.1rem * var(--text-scale, 1)); line-height: 1.6; }

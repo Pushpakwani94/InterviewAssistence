@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SocketService } from '@shared/services/socket.service';
+import { SessionService } from '@shared/services/session.service';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -43,11 +43,7 @@ import { FormsModule } from '@angular/forms';
 
       <!-- Main Content -->
       <div class="p-3 flex-grow-1">
-          <!-- Reconnecting Overlay -->
-          <div *ngIf="connectionStatus === 'reconnecting'" class="alert border-warning text-warning bg-panel mb-3 d-flex align-items-center gap-2">
-            <div class="spinner-border spinner-border-sm" role="status"></div>
-            <span>Reconnecting to session...</span>
-          </div>
+
           
           <ng-container *ngIf="currentQuestion; else waitingTpl">
           <!-- Navigation -->
