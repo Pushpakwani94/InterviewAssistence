@@ -1,9 +1,12 @@
 import { Request, Response } from 'express';
 import Session from '../models/Session';
+import SessionHistory from '../models/SessionHistory';
 
-// Helper function to generate random 6-character alphanumeric code
-const generateSessionCode = () => {
-  return Math.random().toString(36).substring(2, 8).toUpperCase();
+// Helper function to generate random 6-character alphanumeric code with optional prefix
+const generateSessionCode = (technology: string) => {
+  const prefix = technology ? technology.substring(0, 3).toUpperCase() + '-' : '';
+  const randomStr = Math.random().toString(36).substring(2, 8).toUpperCase();
+  return `${prefix}${randomStr}`;
 };
 
 // @desc    Create a new interview session
@@ -12,11 +15,11 @@ const generateSessionCode = () => {
 export const createSession = async (req: Request, res: Response) => {
   try {
     const { sessionName, candidateName, technology, startTime, endTime } = req.body;
-    let sessionCode = generateSessionCode();
+    let sessionCode = generateSessionCode(technology);
 
     // Ensure session code is unique
     while (await Session.findOne({ sessionCode })) {
-      sessionCode = generateSessionCode();
+      sessionCode = generateSessionCode(technology);
     }
 
     const session = await Session.create({
@@ -83,3 +86,36 @@ export const endSession = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// @desc    Get session history (all questions sent during session)
+// @route   GET /api/sessions/:sessionCode/history
+// @access  Public
+export const getSessionHistory = async (req: Request, res: Response) => {
+  try {
+    const { sessionCode } = req.params;
+    const history = await SessionHistory.find({ sessionCode }).sort('sentAt');
+    res.json(history);
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Get session stats
+// @route   GET /api/sessions/:sessionCode/stats
+// @access  Private/Admin
+export const getSessionStats = async (req: Request, res: Response) => {
+  try {
+    const { sessionCode } = req.params;
+    const questionsSentCount = await SessionHistory.countDocuments({ sessionCode });
+    const session = await Session.findOne({ sessionCode });
+    
+    res.json({
+      sessionCode,
+      questionsSentCount,
+      isActive: session ? session.isActive : false
+    });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+

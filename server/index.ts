@@ -30,6 +30,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/sessions', sessionRoutes);
 
 import PollingState from './models/PollingState';
+import SessionHistory from './models/SessionHistory';
 
 import mongoose from 'mongoose';
 
@@ -53,6 +54,10 @@ io.on('connection', (socket) => {
   socket.on('join_session', (sessionCode) => {
     socket.join(sessionCode);
     console.log(`Socket ${socket.id} joined session ${sessionCode}`);
+    
+    // Broadcast updated connected count to admin
+    const connectedCount = io.sockets.adapter.rooms.get(sessionCode)?.size || 0;
+    io.to(sessionCode).emit('stats_update', { connectedCount });
     
     // Send the last known state from memory if available
     if (memoryState.has(sessionCode)) {
@@ -78,9 +83,33 @@ io.on('connection', (socket) => {
           { answerData },
           { upsert: true, new: true }
         );
+        
+        // Save to Audit History
+        await SessionHistory.create({
+          sessionCode,
+          question: answerData.question,
+          answer: answerData.answer,
+          explanation: answerData.explanation,
+          difficulty: answerData.difficulty
+        });
+        
         console.log(`Saved answer for session ${sessionCode} to MongoDB`);
+        
+        // Fetch new stats and broadcast
+        const questionsSentCount = await SessionHistory.countDocuments({ sessionCode });
+        io.to(sessionCode).emit('stats_update', { questionsSentCount });
+        
       } catch (error) {
         console.error('Error saving session to DB:', error);
+      }
+    }
+  });
+
+  socket.on('disconnecting', () => {
+    for (const room of socket.rooms) {
+      if (room !== socket.id) {
+        const connectedCount = (io.sockets.adapter.rooms.get(room)?.size || 1) - 1;
+        io.to(room).emit('stats_update', { connectedCount });
       }
     }
   });

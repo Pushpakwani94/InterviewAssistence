@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SocketService } from '../../shared/services/socket.service';
 
 @Component({
   selector: 'app-dashboard-stats',
@@ -60,7 +61,7 @@ import { CommonModule } from '@angular/common';
             <div class="stat-icon bg-icon-warning text-warning-custom d-flex justify-content-center align-items-center rounded"><i class="bi bi-person-badge"></i></div>
             <span class="text-secondary" style="font-size:0.8rem; font-weight:500">Connected Candidates</span>
           </div>
-          <h4 class="m-0 fw-bold z-index-1 text-main">63</h4>
+          <h4 class="m-0 fw-bold z-index-1 text-main">{{ stats.connectedCount || 0 }}</h4>
           <div class="mt-auto pt-2 z-index-1">
             <small class="text-warning" style="font-size:0.7rem;">Online now</small>
           </div>
@@ -72,10 +73,10 @@ import { CommonModule } from '@angular/common';
         <div class="stat-card p-3 d-flex flex-column h-100 position-relative overflow-hidden" style="--accent: #06B6D4">
           <div class="icon-bg position-absolute"><i class="bi bi-graph-up"></i></div>
           <div class="d-flex align-items-center gap-2 mb-2 z-index-1">
-            <div class="stat-icon bg-icon-cyan text-cyan d-flex justify-content-center align-items-center rounded"><i class="bi bi-graph-up"></i></div>
-            <span class="text-secondary" style="font-size:0.8rem; font-weight:500">Today's Searches</span>
+            <div class="stat-icon bg-icon-cyan text-cyan d-flex justify-content-center align-items-center rounded"><i class="bi bi-send-fill"></i></div>
+            <span class="text-secondary" style="font-size:0.8rem; font-weight:500">Questions Sent</span>
           </div>
-          <h4 class="m-0 fw-bold z-index-1 text-main">1,248</h4>
+          <h4 class="m-0 fw-bold z-index-1 text-main">{{ stats.questionsSentCount || 0 }}</h4>
           <div class="mt-auto pt-2 z-index-1">
             <small class="text-success" style="font-size:0.7rem;"><i class="bi bi-arrow-up-short"></i> 18.7% this month</small>
           </div>
@@ -145,4 +146,14 @@ import { CommonModule } from '@angular/common';
     .bg-icon-pink { background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.2); }
   `]
 })
-export class DashboardStatsComponent {}
+export class DashboardStatsComponent implements OnInit {
+  stats: { connectedCount?: number, questionsSentCount?: number } = { connectedCount: 0, questionsSentCount: 0 };
+  
+  constructor(private socketService: SocketService) {}
+  
+  ngOnInit() {
+    this.socketService.statsSubject.subscribe(stats => {
+      this.stats = { ...this.stats, ...stats };
+    });
+  }
+}

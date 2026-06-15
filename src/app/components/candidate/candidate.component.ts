@@ -59,9 +59,28 @@ import { FormsModule } from '@angular/forms';
         </ng-container>
 
         <ng-template #sessionActiveTpl>
+          <!-- Reconnecting Overlay -->
+          <div *ngIf="connectionStatus === 'reconnecting'" class="alert border-warning text-warning bg-panel mb-3 d-flex align-items-center gap-2">
+            <div class="spinner-border spinner-border-sm" role="status"></div>
+            <span>Reconnecting to session...</span>
+          </div>
+          
           <ng-container *ngIf="currentQuestion; else waitingTpl">
+          <!-- Navigation -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="text-secondary small">Question {{ currentIndex + 1 }} of {{ questionHistory.length }}</span>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-secondary" [disabled]="currentIndex <= 0" (click)="navigateHistory(-1)">
+                <i class="bi bi-chevron-left"></i> Prev
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" [disabled]="currentIndex >= questionHistory.length - 1" (click)="navigateHistory(1)">
+                Next <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+
           <!-- Question Card -->
-          <div class="mobile-card question-card position-relative mt-4 fade-in">
+          <div class="mobile-card question-card position-relative mt-2 fade-in">
             <div class="d-flex align-items-baseline gap-2">
               <div class="text-neon fw-bold d-flex align-items-center gap-1" style="white-space: nowrap; font-size: 1rem;">
                 <i class="bi bi-question-circle"></i>
@@ -141,9 +160,14 @@ export class CandidateComponent implements OnInit, OnDestroy {
   sessionCode = '';
   inputSessionCode = '';
   connected = false;
-  currentQuestion: any = null;
+  connectionStatus: 'connected' | 'disconnected' | 'reconnecting' = 'disconnected';
+  
+  questionHistory: any[] = [];
+  currentIndex = -1;
+  
   showMenu = false;
   private answerSub!: Subscription;
+  private statusSub!: Subscription;
 
   constructor(
     private socketService: SocketService, 
@@ -168,20 +192,60 @@ export class CandidateComponent implements OnInit, OnDestroy {
     }
   }
 
+  get currentQuestion(): any {
+    if (this.currentIndex >= 0 && this.currentIndex < this.questionHistory.length) {
+      return this.questionHistory[this.currentIndex];
+    }
+    return null;
+  }
+
   initializeSession() {
     this.socketService.connect();
     this.socketService.joinSession(this.sessionCode);
     this.connected = true;
 
-    this.answerSub = this.socketService.onReceiveAnswer().subscribe((data) => {
-      this.currentQuestion = data;
+    // Fetch History
+    this.socketService.getHistory(this.sessionCode).subscribe({
+      next: (history) => {
+        if (history && history.length > 0) {
+          this.questionHistory = history;
+          this.currentIndex = history.length - 1;
+          this.cdr.detectChanges();
+        }
+      },
+      error: (err) => console.error('Failed to fetch history', err)
+    });
+
+    this.statusSub = this.socketService.connectionStatus$.subscribe(status => {
+      this.connectionStatus = status;
       this.cdr.detectChanges();
     });
+
+    this.answerSub = this.socketService.onReceiveAnswer().subscribe((data) => {
+      // Add to history if not duplicate (simple check)
+      if (this.questionHistory.length === 0 || this.questionHistory[this.questionHistory.length - 1].question !== data.question) {
+        this.questionHistory.push(data);
+        // Auto-navigate to latest question when a new one arrives
+        this.currentIndex = this.questionHistory.length - 1;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  navigateHistory(direction: number) {
+    const newIndex = this.currentIndex + direction;
+    if (newIndex >= 0 && newIndex < this.questionHistory.length) {
+      this.currentIndex = newIndex;
+      this.cdr.detectChanges();
+    }
   }
 
   ngOnDestroy() {
     if (this.answerSub) {
       this.answerSub.unsubscribe();
+    }
+    if (this.statusSub) {
+      this.statusSub.unsubscribe();
     }
     this.socketService.disconnect();
   }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SocketService } from '@shared/services/socket.service';
 import { AdminStateService } from '../../services/admin-state.service';
+import { Subject } from 'rxjs';
 
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -98,6 +99,19 @@ import { QuestionDetailComponent } from '../question-detail/question-detail.comp
           </ng-container>
         </div>
       </div>
+      
+      <!-- Toast Notification -->
+      <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+        <div id="liveToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" [class.show]="showToast" [class.hide]="!showToast" style="transition: opacity 0.3s; opacity: {{ showToast ? '1' : '0' }}">
+          <div class="d-flex">
+            <div class="toast-body d-flex align-items-center gap-2">
+              <i class="bi bi-check-circle-fill"></i> Question sent to candidates!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="showToast = false" aria-label="Close"></button>
+          </div>
+        </div>
+      </div>
+      
     </div>
   `,
   styles: [`
@@ -145,11 +159,24 @@ export class AdminComponent implements OnInit {
   customQuestion = '';
   customAnswer = '';
   customCode = '';
+  showToast = false;
 
   constructor(private socketService: SocketService) {}
 
   ngOnInit() {
     this.socketService.connect();
+    
+    // Listen for any answer sent from anywhere (like QuestionTable)
+    const originalSend = this.socketService.sendAnswer.bind(this.socketService);
+    this.socketService.sendAnswer = (sessionCode: string, payload: any) => {
+      originalSend(sessionCode, payload);
+      this.triggerToast();
+    };
+  }
+  
+  triggerToast() {
+    this.showToast = true;
+    setTimeout(() => this.showToast = false, 3000);
   }
 
   sendCustom() {
