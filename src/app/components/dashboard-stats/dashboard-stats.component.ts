@@ -102,15 +102,15 @@ import { SessionService } from '../../shared/services/session.service';
   `,
   styles: [`
     .stat-card {
-      background: rgba(30, 41, 59, 0.4);
-      border: 1px solid rgba(255,255,255,0.03);
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(0,0,0,0.05);
       border-radius: 12px;
       transition: all 0.2s;
     }
     .stat-card:hover {
-      background: rgba(30, 41, 59, 0.8);
+      background: rgba(255, 255, 255, 0.8);
       transform: translateY(-2px);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     }
     
     .z-index-1 { z-index: 1; }

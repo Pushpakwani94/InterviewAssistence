@@ -38,12 +38,12 @@ import { AdminStateService } from '../../services/admin-state.service';
   styles: [`
     .navbar { height: var(--header-height); border-bottom: 1px solid var(--border-color); background: var(--bg-main); }
     .search-container { width: 450px; }
-    .search-input { border-radius: 20px; background: rgba(30, 41, 59, 0.4); border-color: rgba(255,255,255,0.05); }
+    .search-input { border-radius: 20px; background: rgba(0, 0, 0, 0.04); border-color: rgba(0,0,0,0.05); }
     .search-input:focus { background: var(--bg-card); }
-    .shortcut-key { right: 10px; font-size: 0.65rem; background: rgba(255,255,255,0.05); padding: 2px 6px; color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.1); }
+    .shortcut-key { right: 10px; font-size: 0.65rem; background: rgba(0,0,0,0.05); padding: 2px 6px; color: var(--text-secondary); border: 1px solid rgba(0,0,0,0.1); }
     .text-accent-blue { color: var(--accent-blue); }
-    .bg-panel { background: rgba(30, 41, 59, 0.3) !important; }
-    .profile-hover:hover { background: rgba(255,255,255,0.05); }
+    .bg-panel { background: rgba(0, 0, 0, 0.03) !important; }
+    .profile-hover:hover { background: rgba(0,0,0,0.05); }
   `]
 })
 export class NavbarComponent {

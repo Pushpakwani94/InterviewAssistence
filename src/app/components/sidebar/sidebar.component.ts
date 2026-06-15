@@ -86,7 +86,7 @@ import { AdminStateService } from '../../services/admin-state.service';
     .nav-header { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 10px; padding-left: 10px; }
     .nav-link { color: var(--text-secondary); padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; margin-bottom: 2px; }
     .nav-link i { margin-right: 8px; font-size: 1rem; opacity: 0.8; }
-    .nav-link:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+    .nav-link:hover { background: rgba(0,0,0,0.05); color: var(--text-main); }
     .nav-link.active { background: rgba(37, 99, 235, 0.1); color: var(--primary-blue); border-left: 3px solid var(--primary-blue); border-top-left-radius: 0; border-bottom-left-radius: 0; }
     .nav-link.active i { opacity: 1; }
     .badge { background: transparent; color: var(--text-secondary); font-weight: 500; }

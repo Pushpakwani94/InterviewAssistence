@@ -18,14 +18,14 @@ import { FormsModule } from '@angular/forms';
           <i class="bi bi-list fs-3 cursor-pointer" (click)="showMenu = !showMenu"></i>
           
           <!-- Dropdown Menu -->
-          <div *ngIf="showMenu" class="dropdown-menu dropdown-menu-dark show position-absolute shadow" style="top: 40px; left: 0; z-index: 1000; border: 1px solid var(--border-color); background: var(--bg-panel);">
-            <a class="dropdown-item py-2 text-light cursor-pointer" (click)="increaseTextSize(); showMenu = false">
-              <i class="bi bi-fonts me-2 text-neon"></i> Text Size
+          <div *ngIf="showMenu" class="dropdown-menu show position-absolute shadow" style="top: 40px; left: 0; z-index: 1000; border: 1px solid var(--border-color); background: var(--bg-panel);">
+            <a class="dropdown-item py-2 text-main cursor-pointer" (click)="increaseTextSize(); showMenu = false">
+              <i class="bi bi-fonts me-2 text-primary"></i> Text Size
             </a>
-            <a class="dropdown-item py-2 text-light cursor-pointer" (click)="copyAnswer(); showMenu = false" *ngIf="currentQuestion">
+            <a class="dropdown-item py-2 text-main cursor-pointer" (click)="copyAnswer(); showMenu = false" *ngIf="currentQuestion">
               <i class="bi bi-clipboard-check me-2 text-green"></i> Copy Answer
             </a>
-            <a class="dropdown-item py-2 text-light cursor-pointer" (click)="toggleFullScreen(); showMenu = false">
+            <a class="dropdown-item py-2 text-main cursor-pointer" (click)="toggleFullScreen(); showMenu = false">
               <i class="bi bi-arrows-fullscreen me-2 text-purple"></i> Full Screen
             </a>
           </div>
@@ -131,7 +131,7 @@ import { FormsModule } from '@angular/forms';
     }
     .cursor-pointer { cursor: pointer; }
     .dropdown-item:hover {
-      background-color: rgba(255, 255, 255, 0.05);
+      background-color: rgba(0, 0, 0, 0.05);
     }
   `]
 })

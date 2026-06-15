@@ -46,7 +46,7 @@ import { AdminStateService } from '../../services/admin-state.service';
     }
     .category-link i { margin-right: 8px; opacity: 0.7; }
     .category-link:hover {
-      background: rgba(255,255,255,0.03);
+      background: rgba(0,0,0,0.03);
       color: var(--text-main);
     }
     .category-link.active {
@@ -58,13 +58,13 @@ import { AdminStateService } from '../../services/admin-state.service';
     .text-accent-blue { color: var(--accent-blue); font-weight: bold; }
     
     .btn-outline-custom {
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(0,0,0,0.1);
       background: transparent;
       font-size: 0.85rem;
       transition: all 0.2s;
     }
     .btn-outline-custom:hover {
-      background: rgba(255,255,255,0.05);
+      background: rgba(0,0,0,0.05);
       color: var(--text-main) !important;
     }
 

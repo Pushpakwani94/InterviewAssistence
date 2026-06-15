@@ -51,7 +51,7 @@ import { SessionService } from '@shared/services/session.service';
           <div class="text-warning fw-bold mb-2" style="font-size:0.75rem">Example</div>
           <div class="code-block position-relative rounded p-3">
             <i class="bi bi-copy position-absolute top-0 end-0 m-2 text-secondary cursor-pointer hover-text-main"></i>
-            <pre class="m-0" style="font-size:0.8rem; font-family: 'Courier New', Courier, monospace; color: #DCDCAA; white-space: pre-wrap">{{ q.example }}</pre>
+            <pre class="m-0" style="font-size:0.8rem; font-family: 'Courier New', Courier, monospace; color: #1E293B; white-space: pre-wrap">{{ q.example }}</pre>
           </div>
         </div>
 
@@ -104,7 +104,7 @@ import { SessionService } from '@shared/services/session.service';
     </ng-template>
   `,
   styles: [`
-    .border-dark-custom { border-color: rgba(255,255,255,0.05) !important; }
+    .border-dark-custom { border-color: rgba(0,0,0,0.05) !important; }
     .text-accent-blue { color: var(--accent-blue); }
     .text-primary-custom { color: var(--primary-blue); }
     .text-purple { color: var(--purple); }
@@ -112,14 +112,14 @@ import { SessionService } from '@shared/services/session.service';
     .hover-text-main:hover { color: var(--text-main) !important; }
     
     .code-block {
-      background: #0D1117;
-      border: 1px solid rgba(255,255,255,0.05);
+      background: #F8FAFC;
+      border: 1px solid rgba(0,0,0,0.05);
     }
     
     .keyword-chip {
       padding: 4px 12px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.05);
+      background: rgba(0,0,0,0.03);
+      border: 1px solid rgba(0,0,0,0.05);
       border-radius: 4px;
       font-size: 0.75rem;
       color: var(--text-secondary);
@@ -130,11 +130,11 @@ import { SessionService } from '@shared/services/session.service';
     }
     
     .btn-outline-custom {
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(0,0,0,0.1);
+      background: rgba(0,0,0,0.02);
       transition: all 0.2s;
     }
-    .btn-outline-custom:hover { background: rgba(255,255,255,0.05); color: var(--text-main) !important; }
+    .btn-outline-custom:hover { background: rgba(0,0,0,0.05); color: var(--text-main) !important; }
     
     .btn-outline-danger-custom {
       border: 1px solid rgba(239, 68, 68, 0.2);

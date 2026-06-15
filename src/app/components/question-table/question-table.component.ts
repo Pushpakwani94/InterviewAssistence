@@ -60,7 +60,7 @@ import { SessionService } from '@shared/services/session.service';
       <div class="p-2 p-md-3 border-top border-dark-custom d-flex gap-2 align-items-center search-toolbar">
         <div class="position-relative flex-grow-1 search-input-wrapper">
           <i class="bi bi-search position-absolute top-50 translate-middle-y text-secondary ms-3"></i>
-          <input type="text" class="input-custom w-100 ps-5 pe-5 py-2" placeholder="Search questions..." style="font-size:0.85rem; border-radius: 8px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); color: white;"
+          <input type="text" class="input-custom w-100 ps-5 pe-5 py-2" placeholder="Search questions..." style="font-size:0.85rem; border-radius: 8px; background: rgba(0,0,0,0.02); border: 1px solid rgba(0,0,0,0.1); color: var(--text-main);"
                  [ngModel]="state.searchQuery()" (ngModelChange)="state.setSearch($event)">
           <i class="bi position-absolute top-50 translate-middle-y end-0 me-3 cursor-pointer fs-5" 
              [ngClass]="isListening ? 'bi-mic-fill text-danger pulse-anim' : 'bi-mic text-secondary'"
@@ -73,15 +73,15 @@ import { SessionService } from '@shared/services/session.service';
     </div>
   `,
   styles: [`
-    .border-dark-custom { border-color: rgba(255,255,255,0.05) !important; }
+    .border-dark-custom { border-color: rgba(0,0,0,0.05) !important; }
     
     .btn-outline-custom {
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(0,0,0,0.1);
       background: transparent;
       font-size: 0.85rem;
       transition: all 0.2s;
     }
-    .btn-outline-custom:hover { background: rgba(255,255,255,0.05); color: var(--text-main) !important; }
+    .btn-outline-custom:hover { background: rgba(0,0,0,0.05); color: var(--text-main) !important; }
     
     .btn-send-custom {
       border: 1px solid rgba(115, 165, 248, 0.3);
@@ -111,8 +111,8 @@ import { SessionService } from '@shared/services/session.service';
     }
     
     .question-row { transition: all 0.2s; cursor: pointer; }
-    .question-row:hover { background: rgba(255,255,255,0.02); }
-    .active-row { background: rgba(255,255,255,0.04) !important; }
+    .question-row:hover { background: rgba(0,0,0,0.02); }
+    .active-row { background: rgba(0,0,0,0.04) !important; }
     
     .fs-7 { font-size: 0.85rem; }
     
