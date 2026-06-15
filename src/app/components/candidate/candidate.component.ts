@@ -2,11 +2,13 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SocketService } from '@shared/services/socket.service';
 import { Subscription } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-candidate',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   template: `
     <div class="d-flex flex-column" style="min-height: 100vh; padding-bottom: 80px;" [style.--text-scale]="textScale">
       
@@ -45,9 +47,19 @@ import { Subscription } from 'rxjs';
       <!-- Main Content -->
       <div class="p-3 flex-grow-1">
         
+        <ng-container *ngIf="!sessionCode; else sessionActiveTpl">
+          <div class="d-flex flex-column align-items-center justify-content-center mt-5 text-center">
+            <h3 class="text-neon mb-3">Join a Session</h3>
+            <p class="text-secondary mb-4">Enter the session code provided by the admin.</p>
+            <div class="input-group mb-3" style="max-width: 300px;">
+              <input type="text" class="form-control" placeholder="Session Code" [(ngModel)]="inputSessionCode" style="background: var(--bg-panel); color: white; border-color: var(--border-color);">
+              <button class="btn btn-outline-neon" type="button" (click)="joinManualSession()">Join</button>
+            </div>
+          </div>
+        </ng-container>
 
-
-        <ng-container *ngIf="currentQuestion; else waitingTpl">
+        <ng-template #sessionActiveTpl>
+          <ng-container *ngIf="currentQuestion; else waitingTpl">
           <!-- Question Card -->
           <div class="mobile-card question-card position-relative mt-4 fade-in">
             <div class="d-flex align-items-baseline gap-2">
@@ -88,6 +100,7 @@ import { Subscription } from 'rxjs';
             <h5 class="text-secondary">Waiting for the next question...</h5>
           </div>
         </ng-template>
+        </ng-template>
       </div>
 
       <!-- Bottom Navigation -->
@@ -125,15 +138,37 @@ import { Subscription } from 'rxjs';
 })
 export class CandidateComponent implements OnInit, OnDestroy {
   textScale = 1;
-  sessionCode = 'JAVA123'; // Mock code for now
+  sessionCode = '';
+  inputSessionCode = '';
   connected = false;
   currentQuestion: any = null;
   showMenu = false;
   private answerSub!: Subscription;
 
-  constructor(private socketService: SocketService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private socketService: SocketService, 
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit() {
+    this.route.paramMap.subscribe(params => {
+      const code = params.get('sessionCode');
+      if (code) {
+        this.sessionCode = code;
+        this.initializeSession();
+      }
+    });
+  }
+
+  joinManualSession() {
+    if (this.inputSessionCode.trim()) {
+      this.router.navigate(['/candidate', this.inputSessionCode.trim().toUpperCase()]);
+    }
+  }
+
+  initializeSession() {
     this.socketService.connect();
     this.socketService.joinSession(this.sessionCode);
     this.connected = true;
